@@ -4,10 +4,10 @@
 
 ## Использовано
 
-- easyui
+- easyui https://www.jeasyui.com/
 - jquery
-- easymde
-- https://fontawesome.com/v4/icon/star
+- иконки https://fontawesome.com/v4/icon/star
+- redbeans https://redbeanphp.com/index.php
 
 ## Скриншоты
 
