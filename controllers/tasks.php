@@ -48,7 +48,21 @@ if ($sMethod == 'list_last_done_tasks') {
     die(json_encode(array_values($aResult)));
 }
 
+function fnBuildRecursiveTasksTreeDelete($oTask) 
+{
+    $aChildren = R::findAll(T_TASKS, " ttasks_id = {$oTask->id}");
+
+    foreach ($aChildren as $oChildTask) {
+        fnBuildRecursiveTasksTreeDelete($oChildTask);
+        R::trashBatch(T_TASKS, [$oChildTask->id]);
+    }
+}
+
 if ($sMethod == 'delete_task') {
+    $oTask = R::findOne(T_TASKS, "id = ?", [$aRequest['id']]);
+
+    fnBuildRecursiveTasksTreeDelete($oTask);
+
     R::trashBatch(T_TASKS, [$aRequest['id']]);
     die(json_encode([]));
 }
