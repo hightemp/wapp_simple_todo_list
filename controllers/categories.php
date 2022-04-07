@@ -1,27 +1,6 @@
 <?php
 
 // Таблицы
-function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories) 
-{
-    $aResult = [];
-
-    foreach ($aCategories as $oCategory) {
-        $aTreeChildren = [];
-
-        $aChildren = R::findAll(T_CATEGORIES, " tcategories_id = {$oCategory->id}");
-        fnBuildRecursiveCategoriesTree($aTreeChildren, $aChildren);
-
-        $aResult[] = [
-            'id' => $oCategory->id,
-            'text' => $oCategory->name,
-            'name' => $oCategory->name,
-            'description' => $oCategory->name,
-            'category_id' => $oCategory->tcategories_id,
-            'children' => $aTreeChildren,
-            'notes_count' => $oCategory->countOwn(T_TASKS)
-        ];
-    }
-}
 
 if ($sMethod == 'list_tree_categories') {
     if (isset($aRequest['category_id'])) {
@@ -47,7 +26,10 @@ if ($sMethod == 'get_category') {
 }
 
 if ($sMethod == 'delete_category') {
-    R::trashBatch(T_CATEGORIES, [$aRequest['id']]);
+    $oCategory = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['id']]);
+
+    fnBuildRecursiveCategoriesTreeDelete($oCategory);
+
     die(json_encode([]));
 }
 
