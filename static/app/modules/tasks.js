@@ -7,7 +7,7 @@ export class Tasks {
         create: 'ajax.php?method=create_task',
         update: tpl`ajax.php?method=update_task&id=${0}`,
         delete: 'ajax.php?method=delete_task',
-        list: tpl`ajax.php?method=list_notes&category_id=${0}`,
+        list: tpl`ajax.php?method=list_tree_tasks&category_id=${0}`,
 
         move_to_root_task: 'ajax.php?method=move_to_root_task',
 
@@ -376,7 +376,7 @@ export class Tasks {
         this.fnComponentUndone({
             singleSelect: true,
 
-            url: this.oURLs.list_undone(iCID),
+            url: this.oURLs.list(iCID),
             method: 'get',
             height: "100%",
             rownumbers: true,
@@ -384,6 +384,8 @@ export class Tasks {
             idField: 'id',
             treeField: 'text',
 
+            checkbox: true,
+
             columns:[[
                 {
                     field:'text',title:'Описание',
@@ -394,6 +396,14 @@ export class Tasks {
                 },
                 {field:'created_at',title:'Создано',width:200},
             ]],
+
+            onCheckNode: ((row,checked) => {
+                if (checked) {
+                    this.fnCheckTask(row);
+                } else {
+                    this.fnUncheckTask(row);
+                }
+            }).bind(this),
 
             onContextMenu: ((e, node) => {
                 e.preventDefault();
@@ -421,53 +431,64 @@ export class Tasks {
             }).bind(this),
         });
 
-        this.fnComponentDone({
-            singleSelect: true,
+        // this.fnComponentDone({
+        //     singleSelect: true,
 
-            url: this.oURLs.list_done(iCID),
-            method: 'get',
-            height: "100%",
-            rownumbers: true,
+        //     url: this.oURLs.list_done(iCID),
+        //     method: 'get',
+        //     height: "100%",
+        //     rownumbers: true,
 
-            idField:'id',
-            treeField:'text',
+        //     idField:'id',
+        //     treeField:'text',
 
-            columns:[[
-                {
-                    field:'text',title:'Описание',
-                    formatter: function(value,row,index){
-                        return `<div class="wrapped-text">${value}</style>`
-                    },
-                    width:600
-                },
-                {field:'created_at',title:'Создано',width:200},
-            ]],
+        //     checkbox: true,
 
-            onContextMenu: ((e, node) => {
-                e.preventDefault();
-                this.oContextMenu.menu('show', {
-                    left: e.pageX,
-                    top: e.pageY,
-                    onClick: (item) => {
-                        if (item.id == 'check') {
-                            this.fnCheckTask(node);
-                        }
-                        if (item.id == 'uncheck') {
-                            this.fnUncheckTask(node);
-                        }
-                        if (item.id == 'edit') {
-                            this.fnShowEditWindow(node);
-                        }
-                        if (item.id == 'delete') {
-                            this.fnDelete(node);
-                        }
-                        if (item.id == 'move_to_root_task') {
-                            this.fnMoveToRoot(node);
-                        }
-                    }
-                });
-            }).bind(this),
-        });
+        //     columns:[[
+        //         {
+        //             field:'text',title:'Описание',
+        //             formatter: function(value,row,index){
+        //                 return `<div class="wrapped-text">${value}</style>`
+        //             },
+        //             width:600
+        //         },
+        //         {field:'created_at',title:'Создано',width:200},
+        //     ]],
+
+        //     onCheckNode: ((row,checked) => {
+        //         console.log([row,checked]);
+        //         if (checked) {
+        //             this.fnCheckTask(row);
+        //         } else {
+        //             this.fnUncheckTask(row);
+        //         }
+        //     }).bind(this),
+
+        //     onContextMenu: ((e, node) => {
+        //         e.preventDefault();
+        //         this.oContextMenu.menu('show', {
+        //             left: e.pageX,
+        //             top: e.pageY,
+        //             onClick: (item) => {
+        //                 if (item.id == 'check') {
+        //                     this.fnCheckTask(node);
+        //                 }
+        //                 if (item.id == 'uncheck') {
+        //                     this.fnUncheckTask(node);
+        //                 }
+        //                 if (item.id == 'edit') {
+        //                     this.fnShowEditWindow(node);
+        //                 }
+        //                 if (item.id == 'delete') {
+        //                     this.fnDelete(node);
+        //                 }
+        //                 if (item.id == 'move_to_root_task') {
+        //                     this.fnMoveToRoot(node);
+        //                 }
+        //             }
+        //         });
+        //     }).bind(this),
+        // });
     }
 
     static fnPrepare()

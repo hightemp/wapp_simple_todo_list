@@ -42,7 +42,8 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
             'category_id' => $oTask->tcategories_id,
             'task_id' => $oTask->ttasks_id,
             'children' => $aTreeChildren,
-            'notes_count' => $oTask->countOwn(T_TASKS)
+            'notes_count' => $oTask->countOwn(T_TASKS),
+            'checked' => $oTask->is_ready == '1',
         ];
     }
 }

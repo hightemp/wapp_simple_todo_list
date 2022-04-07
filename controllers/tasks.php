@@ -72,7 +72,7 @@ if ($sMethod == 'check_task') {
     $oTask = R::findOne(T_TASKS, "id = ?", [$aRequest['id']]);
 
     $oTask->is_ready = 1;
-    $oTask->ttasks = NULL;
+    // $oTask->ttasks = NULL;
 
     fnBuildRecursiveTasksTreeModify($oTask, 1);
 
@@ -88,7 +88,7 @@ if ($sMethod == 'uncheck_task') {
     $oTask = R::findOne(T_TASKS, "id = ?", [$aRequest['id']]);
 
     $oTask->is_ready = 0;
-    $oTask->ttasks = NULL;
+    // $oTask->ttasks = NULL;
 
     fnBuildRecursiveTasksTreeModify($oTask, 0);
 

@@ -16,8 +16,8 @@
         </div>
     </div>
     <div data-options="region:'center',title:'',iconCls:'icon-ok'">
-        <div class="easyui-layout" data-options="fit:true">
-            <div data-options="region:'north',split:true" title="" style="height:500px;">
+        <!-- <div class="easyui-layout" data-options="fit:true">
+            <div data-options="region:'north',split:true" title="" style="height:500px;"> -->
                 <div 
                     class="easyui-panel" 
                     title="  " 
@@ -32,7 +32,7 @@
                     <a href="javascript:void(0)" class="icon-remove" id="tasks-undone-remove-btn"></a>
                     <a href="javascript:void(0)" class="icon-reload" id="tasks-undone-reload-btn"></a>
                 </div>
-            </div>
+            <!-- </div>
             <div data-options="region:'center',split:true" title="" style="height:auto;">
                 <div 
                     class="easyui-panel" 
@@ -49,7 +49,7 @@
                     <a href="javascript:void(0)" class="icon-reload" id="tasks-done-reload-btn"></a>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
