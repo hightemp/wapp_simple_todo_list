@@ -60,6 +60,10 @@ if ($sMethod == 'create_task') {
     $oTask->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
     $oTask->ttasks = R::findOne(T_TASKS, "id = ?", [$aRequest['task_id']]);
 
+    if ($oTask->ttasks) {
+        $oTask->ttasks->is_ready = 0;
+    }
+
     R::store($oTask);
 
     die(json_encode([
@@ -72,7 +76,6 @@ if ($sMethod == 'check_task') {
     $oTask = R::findOne(T_TASKS, "id = ?", [$aRequest['id']]);
 
     $oTask->is_ready = 1;
-    // $oTask->ttasks = NULL;
 
     fnBuildRecursiveTasksTreeModify($oTask, 1);
 
@@ -88,7 +91,10 @@ if ($sMethod == 'uncheck_task') {
     $oTask = R::findOne(T_TASKS, "id = ?", [$aRequest['id']]);
 
     $oTask->is_ready = 0;
-    // $oTask->ttasks = NULL;
+
+    if ($oTask->ttasks) {
+        $oTask->ttasks->is_ready = 0;
+    }
 
     fnBuildRecursiveTasksTreeModify($oTask, 0);
 
