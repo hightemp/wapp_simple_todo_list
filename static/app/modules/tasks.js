@@ -109,12 +109,16 @@ export class Tasks {
         this._oSelectedRow = oRows;
         this.oDialogForm.form('clear');
         this.oDialogForm.form('load', oRows);
+        this.oCategoryTreeList.combotree('setValue', oRows.category_id);
         this.oTasksTreeList.combotree('setValue', oRows.task_id);
     }
 
     static fnShowCreateWindow() {
         this.sURL = this.oURLs.create;
-        var oData = {}
+        var oData = {
+            category_id: this._oSelectedCategory ? this._oSelectedCategory.id : '',
+            task_id: this._oSelectedRow ? this._oSelectedRow.id : '',
+        }
         this.fnShowDialog(this.oWindowTitles.create);
         this.fnDialogFormLoad(oData);
     }
@@ -338,12 +342,6 @@ export class Tasks {
             method: 'get',
             labelPosition: 'top',
             width: '100%',
-            // editable: true,
-            // onChange: ((sO, sN) => {
-            //     if (!this.oDialog.dialog('closed') && sO && !sN) {
-            //         this.oCategoryTreeList.combotree('clear');
-            //     }
-            // }).bind(this),
             onLoadSuccess: ((node, data) => {
                 if (this._oSelectedCategory) {
                     this.oCategoryTreeList.combotree('setValue', this._oSelectedCategory.id);
@@ -361,12 +359,6 @@ export class Tasks {
             method: 'get',
             labelPosition: 'top',
             width: '100%',
-            // editable: true,
-            // onChange: ((sO, sN) => {
-            //     if (!this.oDialog.dialog('closed') && sO && !sN) {
-            //         this.oTasksTreeList.combotree('clear');
-            //     }
-            // }).bind(this),
             onLoadSuccess: ((node, data) => {
                 if (this._oSelectedRow) {
                     this.oTasksTreeList.combotree('setValue', this._oSelectedRow.id);

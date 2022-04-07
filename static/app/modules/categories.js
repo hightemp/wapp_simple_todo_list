@@ -208,13 +208,6 @@ export class Categories {
             method: 'get',
             labelPosition: 'top',
             width: '100%',
-            // editable: true,
-            // onChange: ((sO, sN) => {
-            //     console.log([sO, sN]);
-            //     if (!this.oDialog.closed && sO && !sN) {
-            //         this.oCategoryTreeList.combotree('clear');
-            //     }
-            // }).bind(this),
         })
     }
 
