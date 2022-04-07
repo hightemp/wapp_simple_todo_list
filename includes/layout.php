@@ -87,9 +87,9 @@
                 <label>Родительская задача:</label>
                 <input id="tasks-task_id" name="task_id" class="easyui-combotree" style="width:100%">
             </div>
-            <div style="margin-bottom:10px">
+            <div style="margin-bottom:10px" id="tasks-name-fieldblock">
                 <label>Заголовок:</label>
-                <input name="name" class="easyui-textbox" style="width:100%;">
+                <input name="name" class="easyui-textbox" style="width:100%;" id="tasks-name">
             </div>
             <div style="margin-bottom:10px">
                 <label>Описание:</label>
@@ -108,8 +108,9 @@
         <div data-options="id:'delete'">Удалить</div>
     </div>
     <div id="tasks-mm" class="easyui-menu" style="width:auto;">
-        <div data-options="id:'check'">Выполнено</div>
-        <div data-options="id:'uncheck'">Не выполнено</div>
+        <!-- <div data-options="id:'check'">Выполнено</div>
+        <div data-options="id:'uncheck'">Не выполнено</div> -->
+        <div data-options="id:'add'">Добавить задачу</div>
         <div data-options="id:'move_to_root_task'">Переместить в корень</div>
         <div data-options="id:'edit'">Радактировать</div>
         <div data-options="id:'delete'">Удалить</div>

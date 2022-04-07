@@ -1,12 +1,12 @@
 version: '3'
 
 networks:
-  nw_wapp_notes:
+  nw_wapp_simple_todo_list:
 
 services:
   nginx:
     restart: always
-    hostname: wapp_notes.local
+    hostname: wapp_simple_todo_list.local
     build:
       context: ./nginx
       dockerfile: Dockerfile
@@ -22,7 +22,7 @@ services:
     environment:
       TZ: ${WORKSPACE_TIMEZONE}
     networks:
-      - nw_wapp_notes
+      - nw_wapp_simple_todo_list
 
   php_fpm:
     restart: always
@@ -42,4 +42,4 @@ services:
     env_file:
       - ./.env
     networks:
-      - nw_wapp_notes
+      - nw_wapp_simple_todo_list

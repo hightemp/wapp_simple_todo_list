@@ -31,6 +31,7 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
 
         $aChildren = R::findAll(T_TASKS, " ttasks_id = {$oTask->id} {$sSQL}", $aBindings);
         fnBuildRecursiveTasksTree($aTreeChildren, $aChildren, $sSQL, $aBindings);
+        $iC = $oTask->countOwn(T_TASKS);
 
         $aResult[] = [
             'id' => $oTask->id,
@@ -42,8 +43,9 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
             'category_id' => $oTask->tcategories_id,
             'task_id' => $oTask->ttasks_id,
             'children' => $aTreeChildren,
-            'notes_count' => $oTask->countOwn(T_TASKS),
+            'notes_count' => $iC,
             'checked' => $oTask->is_ready == '1',
+            // 'state' => $iC > 0 ? "closed" : "",
         ];
     }
 }

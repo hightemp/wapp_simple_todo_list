@@ -45,6 +45,10 @@ export class Tasks {
         return $('#tasks-dlg-fm');
     }
 
+    static get oTasksNameInput() {
+        return $($('#tasks-name-fieldblock input')[1]);
+    }
+
     static get oComponentUndone() {
         return $("#tasks-undone-tg");
     }
@@ -106,11 +110,11 @@ export class Tasks {
         this.oDialog.dialog('open').dialog('center').dialog('setTitle', sTitle);
     }
     static fnDialogFormLoad(oRows={}) {
-        this._oSelectedRow = oRows;
         this.oDialogForm.form('clear');
         this.oDialogForm.form('load', oRows);
         this.oCategoryTreeList.combotree('setValue', oRows.category_id);
         this.oTasksTreeList.combotree('setValue', oRows.task_id);
+        this.oTasksNameInput.focus();
     }
 
     static fnShowCreateWindow() {
@@ -157,6 +161,10 @@ export class Tasks {
     }
     static fnGetSelectedDone() {
         return this.fnComponentDone('getSelected');
+    }
+
+    static fnSelectUndone(oTarget) {
+        this.fnComponentUndone('select', oTarget);
     }
 
     static fnReload() {
@@ -258,6 +266,8 @@ export class Tasks {
                 return this.fnShowMessageCategoryNotSelected();
             }
 
+            this._oSelectedRow = this.fnGetSelectedUndone();
+
             this.fnShowCreateWindow();
         }).bind(this))
         this.oUndonePanelEditButton.click((() => {
@@ -265,7 +275,7 @@ export class Tasks {
                 return this.fnShowMessageCategoryNotSelected();
             }
 
-            var oSelected = this.fnGetSelectedUndone();
+            var oSelected = this._oSelectedRow = this.fnGetSelectedUndone();
 
             if (oSelected) {
                 this.fnShowEditWindow(oSelected);
@@ -276,7 +286,7 @@ export class Tasks {
                 return this.fnShowMessageCategoryNotSelected();
             }
 
-            var oSelected = this.fnGetSelectedUndone();
+            var oSelected = this._oSelectedRow = this.fnGetSelectedUndone();
             if (oSelected) {
                 this.fnDelete(oSelected);
             }
@@ -290,41 +300,41 @@ export class Tasks {
         }).bind(this))
 
 
-        this.oDonePanelAddButton.click((() => {
-            if (!this._oSelectedCategory) {
-                return this.fnShowMessageCategoryNotSelected();
-            }
+        // this.oDonePanelAddButton.click((() => {
+        //     if (!this._oSelectedCategory) {
+        //         return this.fnShowMessageCategoryNotSelected();
+        //     }
 
-            this.fnShowCreateWindow();
-        }).bind(this))
-        this.oDonePanelEditButton.click((() => {
-            if (!this._oSelectedCategory) {
-                return this.fnShowMessageCategoryNotSelected();
-            }
+        //     this.fnShowCreateWindow();
+        // }).bind(this))
+        // this.oDonePanelEditButton.click((() => {
+        //     if (!this._oSelectedCategory) {
+        //         return this.fnShowMessageCategoryNotSelected();
+        //     }
 
-            var oSelected = this.fnGetSelectedUndone();
+        //     var oSelected = this._oSelectedRow = this.fnGetSelectedDone();
 
-            if (oSelected) {
-                this.fnShowEditWindow(oSelected);
-            }
-        }).bind(this))
-        this.oDonePanelRemoveButton.click((() => {
-            if (!this._oSelectedCategory) {
-                return this.fnShowMessageCategoryNotSelected();
-            }
+        //     if (oSelected) {
+        //         this.fnShowEditWindow(oSelected);
+        //     }
+        // }).bind(this))
+        // this.oDonePanelRemoveButton.click((() => {
+        //     if (!this._oSelectedCategory) {
+        //         return this.fnShowMessageCategoryNotSelected();
+        //     }
 
-            var oSelected = this.fnGetSelectedUndone();
-            if (oSelected) {
-                this.fnDelete(oSelected);
-            }
-        }).bind(this))
-        this.oDonePanelReloadButton.click((() => {
-            if (!this._oSelectedCategory) {
-                return this.fnShowMessageCategoryNotSelected();
-            }
+        //     var oSelected = this.fnGetSelectedUndone();
+        //     if (oSelected) {
+        //         this.fnDelete(oSelected);
+        //     }
+        // }).bind(this))
+        // this.oDonePanelReloadButton.click((() => {
+        //     if (!this._oSelectedCategory) {
+        //         return this.fnShowMessageCategoryNotSelected();
+        //     }
 
-            this.fnReload();
-        }).bind(this))
+        //     this.fnReload();
+        // }).bind(this))
     }
 
     static fnFireEvent_Save() {
@@ -407,15 +417,23 @@ export class Tasks {
 
             onContextMenu: ((e, node) => {
                 e.preventDefault();
+
+                this.fnSelectUndone(node.id);
+
+                this._oSelectedRow = this.fnGetSelectedUndone();
+                
                 this.oContextMenu.menu('show', {
                     left: e.pageX,
                     top: e.pageY,
                     onClick: (item) => {
-                        if (item.id == 'check') {
-                            this.fnCheckTask(node);
-                        }
-                        if (item.id == 'uncheck') {
-                            this.fnUncheckTask(node);
+                        // if (item.id == 'check') {
+                        //     this.fnCheckTask(node);
+                        // }
+                        // if (item.id == 'uncheck') {
+                        //     this.fnUncheckTask(node);
+                        // }
+                        if (item.id == 'add') {
+                            this.fnShowCreateWindow();
                         }
                         if (item.id == 'edit') {
                             this.fnShowEditWindow(node);
