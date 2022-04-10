@@ -14,7 +14,7 @@ function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories)
             'id' => $oCategory->id,
             'text' => $oCategory->name,
             'name' => $oCategory->name,
-            'description' => $oCategory->name,
+            'description' => $oCategory->description,
             'category_id' => $oCategory->tcategories_id,
             'children' => $aTreeChildren,
             'notes_count' => $oCategory->countOwn(T_TASKS)
@@ -39,7 +39,7 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
             'created_at' => $oTask->created_at,
             'is_ready' => $oTask->is_ready,
             'name' => $oTask->name,
-            'description' => $oTask->name,
+            'description' => $oTask->description,
             'category_id' => $oTask->tcategories_id,
             'task_id' => $oTask->ttasks_id,
             'children' => $aTreeChildren,

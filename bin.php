@@ -12,12 +12,17 @@ if ($argv[1] == "truncate_category") {
     die();
 }
 
+if ($argv[1] == "list_tables") {
+    $listOfTables = R::inspect();
+    die(json_encode($listOfTables));
+}
+
 if ($argv[1] == "list_fields") {
     $fields = R::inspect($argv[2]);
     die(json_encode($fields));
 }
 
-if ($argv[1] == "tmp__create_scheme") {
+if ($argv[1] == "create_scheme") {
     R::nuke();
 
     $oCategory = R::dispense(T_CATEGORIES);

@@ -13,3 +13,7 @@ body {
     display: grid;
     grid-template-rows: 1fr;
 }
+
+.done {
+    color: #aaa;
+}

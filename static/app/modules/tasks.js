@@ -400,7 +400,8 @@ export class Tasks {
                 {
                     field:'text',title:'Описание',
                     formatter: function(value,row,index){
-                        return `<div class="wrapped-text">${value}</style>`
+                        var sC = (row.is_ready == '1') ? 'done' : 'undone';
+                        return `<div class="wrapped-text ${sC}">${value}</style>`
                     },
                     width:600
                 },
