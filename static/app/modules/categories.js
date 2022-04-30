@@ -157,6 +157,7 @@ export class Categories {
     }
 
     static fnSelect(oTarget) {
+        console.log([oTarget]);
         this.fnComponent('select', oTarget);
     }
 
@@ -225,10 +226,12 @@ export class Categories {
             animate:true,
             lines:true,
             dnd:true,
+
             onSelect: ((oNode) => {
                 this._oSelected = oNode;
                 this.fnFireEvent_Select(oNode);
             }).bind(this),
+
             onContextMenu: (function(e, node) {
                 e.preventDefault();
                 this.fnSelect(node.target);
@@ -254,8 +257,22 @@ export class Categories {
                     }).bind(this)
                 });
             }).bind(this),
+
+            onLoadSuccess: (() => {
+                if (this._oSelected) {
+                    var oNode = this.fnComponent('findBy', {
+                        field: 'id',
+                        value: this._oSelected.id
+                    })
+                    this.fnSelect(oNode.target);
+                }
+            }).bind(this),
+
             formatter: function(node) {
                 var s = node.text;
+                if (node.id == 0) {
+                    s = `<b>${s}</b>`;
+                }
                 if (node.children){
                     s += '&nbsp;<span style=\'color:blue\'>(' + node.notes_count + ')</span>';
                 }

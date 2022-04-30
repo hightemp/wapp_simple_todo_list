@@ -50,6 +50,28 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
     }
 }
 
+function fnBuildTasksList(&$aResult, $aTasks, $sSQL = "", $aBindings=[]) 
+{
+    $aResult = [];
+
+    foreach ($aTasks as $oTask) {
+        $iC = $oTask->countOwn(T_TASKS);
+
+        $aResult[] = [
+            'id' => $oTask->id,
+            'text' => $oTask->name,
+            'created_at' => $oTask->created_at,
+            'is_ready' => $oTask->is_ready,
+            'name' => $oTask->name,
+            'description' => $oTask->description,
+            'category_id' => $oTask->tcategories_id,
+            'task_id' => $oTask->ttasks_id,
+            'notes_count' => $iC,
+            'checked' => $oTask->is_ready == '1',
+        ];
+    }
+}
+
 function fnBuildRecursiveTasksTreeModify($oTask, $bIsReady) 
 {
     $aChildren = R::findAll(T_TASKS, " ttasks_id = {$oTask->id}");
@@ -59,6 +81,18 @@ function fnBuildRecursiveTasksTreeModify($oTask, $bIsReady)
         R::store($oChildTask);
 
         fnBuildRecursiveTasksTreeModify($oChildTask, $bIsReady);
+    }
+}
+
+function fnBuildRecursiveTasksTreeModifyCategory($oTask, $iCategoryID) 
+{
+    $aChildren = R::findAll(T_TASKS, " ttasks_id = {$oTask->id}");
+
+    foreach ($aChildren as $oChildTask) {
+        $oChildTask->tcategories_id = $iCategoryID;
+        R::store($oChildTask);
+
+        fnBuildRecursiveTasksTreeModify($oChildTask, $iCategoryID);
     }
 }
 

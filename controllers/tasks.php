@@ -1,10 +1,15 @@
 <?php
 
 if ($sMethod == 'list_tree_tasks') {
-    $aTasks = R::findAll(T_TASKS, 'ttasks_id IS NULL AND tcategories_id = ? ORDER BY id DESC', [$aRequest['category_id']]);
     $aResult = [];
 
-    fnBuildRecursiveTasksTree($aResult, $aTasks);
+    if (isset($aRequest['category_id']) && $aRequest['category_id']>0) {
+        $aTasks = R::findAll(T_TASKS, 'ttasks_id IS NULL AND tcategories_id = ? ORDER BY id DESC', [$aRequest['category_id']]);
+        fnBuildRecursiveTasksTree($aResult, $aTasks);
+    } else {
+        $aTasks = R::findAll(T_TASKS, 'ORDER BY id DESC', []);
+        fnBuildTasksList($aResult, $aTasks);
+    }
 
     die(json_encode(array_values($aResult)));
 }
@@ -39,6 +44,8 @@ if ($sMethod == 'update_task') {
     $oTask->description = $aRequest['description'];
     $oTask->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
     $oTask->ttasks = R::findOne(T_TASKS, "id = ?", [$aRequest['task_id']]);
+
+    fnBuildRecursiveTasksTreeModifyCategory($oTask, $aRequest['category_id']);
 
     R::store($oTask);
 
