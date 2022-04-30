@@ -22,11 +22,12 @@
                     class="easyui-panel" 
                     title="  " 
                     style="padding:0px;"
-                    data-options="tools:'#tasks-undone-tt', fit:true"
+                    data-options="tools:'#tasks-undone-tt',fit:true"
                 >
                     <table id="tasks-undone-tg" class="easyui-treegrid"></table>
                 </div>
                 <div id="tasks-undone-tt">
+                    <a href="javascript:void(0)" class="icon-tip" id="tasks-unselect-btn"></a>
                     <a href="javascript:void(0)" class="icon-add" id="tasks-undone-add-btn"></a>
                     <a href="javascript:void(0)" class="icon-edit" id="tasks-undone-edit-btn"></a>
                     <a href="javascript:void(0)" class="icon-remove" id="tasks-undone-remove-btn"></a>
@@ -59,7 +60,10 @@
         <form id="categories-dlg-fm" method="post" novalidate style="margin:0;padding:5px">
             <div style="margin-bottom:10px">
                 <label>Категория:</label>
-                <input id="categories-category_id" name="category_id" class="easyui-combotree" style="width:100%">
+                <div class="input-with-btn">
+                    <div><input id="categories-category_id" name="category_id" class="easyui-combotree" style="width:100%"></div>
+                    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-remove" id="categories-category-clean-btn" style="width:auto"></a>
+                </div>
             </div>
             <div style="margin-bottom:10px">
                 <label>Заголовок:</label>
@@ -73,7 +77,7 @@
     </div>
     <div id="categories-dlg-buttons">
         <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" id="categories-dlg-save-btn" style="width:auto">Сохранить</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" id="categories-dlg-cancel-btn" style="width:auto">Отмена</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" id="categories-dlg-cancel-btn" style="width:auto">Отмена</a>
     </div>
 
     <!-- Задачи -->
@@ -81,11 +85,17 @@
         <form id="tasks-dlg-fm" method="post" novalidate style="margin:0;padding:5px">
             <div style="margin-bottom:10px">
                 <label>Категория:</label>
-                <input id="tasks-category_id" name="category_id" required="true" class="easyui-combotree" style="width:100%">
+                <div class="input-with-btn">
+                    <div><input id="tasks-category_id" name="category_id" required="true" class="easyui-combotree" style="width:100%"></div>
+                    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-remove" id="tasks-category-clean-btn" style="width:auto"></a>
+                </div>
             </div>
             <div style="margin-bottom:10px">
                 <label>Родительская задача:</label>
-                <input id="tasks-task_id" name="task_id" class="easyui-combotree" style="width:100%">
+                <div class="input-with-btn">
+                    <div><input id="tasks-task_id" name="task_id" class="easyui-combotree" style="width:100%"></div>
+                    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-remove" id="tasks-task-clean-btn" style="width:auto"></a>
+                </div>
             </div>
             <div style="margin-bottom:10px" id="tasks-name-fieldblock">
                 <label>Заголовок:</label>

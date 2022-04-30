@@ -24,6 +24,8 @@ include_once("./database.php");
 
     <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">
+
+    <link rel="stylesheet" href="/static/app/icons.css">
 </head>
 <body>
     <div id="main-panel">

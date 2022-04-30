@@ -17,3 +17,8 @@ body {
 .done {
     color: #aaa;
 }
+
+.input-with-btn {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+}

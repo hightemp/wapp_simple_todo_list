@@ -59,6 +59,14 @@ export class Tasks {
         return $("#tasks-mm");
     }
 
+    static get oTitle() {
+        return $("#main-panel > div.easyui-layout.layout.easyui-fluid > div.panel.layout-panel.layout-panel-center.panel-htop > div > div.panel.panel-htop.easyui-fluid > div.panel-header > div.panel-title")
+    }
+
+    static get oQuickTaskInput() {
+        return $("#quick-task-input");
+    }
+
     static get oCategoryTreeList() {
         return $("#tasks-category_id");
     }
@@ -66,6 +74,12 @@ export class Tasks {
         return $("#tasks-task_id");
     }
 
+    static get oEditDialogCategoryCleanBtn() {
+        return $('#tasks-category-clean-btn');
+    }
+    static get oEditDialogParentTaskCleanBtn() {
+        return $('#tasks-task-clean-btn');
+    }
     static get oEditDialogSaveBtn() {
         return $('#tasks-dlg-save-btn');
     }
@@ -73,6 +87,10 @@ export class Tasks {
         return $('#tasks-dlg-cancel-btn');
     }
 
+
+    static get oUndonePanelUnselectButton() {
+        return $('#tasks-unselect-btn');
+    }
     static get oUndonePanelAddButton() {
         return $('#tasks-undone-add-btn');
     }
@@ -228,9 +246,12 @@ export class Tasks {
     static fnReloadLists()
     {
         var iCID = this._oSelectedCategory ? this._oSelectedCategory.id : 0;
+        var iRID = this._oSelectedCategory ? this._oSelectedCategory.id : 0;
 
         this.oCategoryTreeList.combotree('reload');
+        this.oCategoryTreeList.combotree('setValue', iCID);
         this.oTasksTreeList.combotree('reload', this.oURLs.list_tree_tasks(iCID));
+        this.oTasksTreeList.combotree('setValue', iRID);
     }
 
     static fnShowMessageCategoryNotSelected()
@@ -245,7 +266,7 @@ export class Tasks {
             this.fnReloadLists();
 
             this.fnComponentUndone('unselectAll');
-            this.fnComponentDone('unselectAll');
+            // this.fnComponentDone('unselectAll');
 
             this.fnInitComponent();
         }).bind(this))
@@ -254,6 +275,33 @@ export class Tasks {
             this.fnReloadLists();
         }).bind(this))
 
+        this.oQuickTaskInput.on('keydown', ((oEvent) => {
+            if (oEvent.which == 13 || oEvent.keyCode == 13) {
+                $.post(
+                    this.oURLs.create,
+                    { 
+                        category_id: this._oSelectedCategory.id,
+                        task_id: this._oSelectedRow ? this._oSelectedRow.id : null,
+                        name: oEvent.target.value,
+                        description: '',
+                    },
+                    (function(result) {
+                        this.fnReload();
+                        this.fnReloadLists();
+                    }).bind(this),
+                    'json'
+                );
+
+                oEvent.target.value = '';
+            }
+        }).bind(this));
+
+        this.oEditDialogCategoryCleanBtn.click((() => {
+            this.oCategoryTreeList.combotree('clear');
+        }).bind(this))
+        this.oEditDialogParentTaskCleanBtn.click((() => {
+            this.oTasksTreeList.combotree('clear');
+        }).bind(this))
         this.oEditDialogSaveBtn.click((() => {
             this.fnSave();
         }).bind(this))
@@ -261,6 +309,11 @@ export class Tasks {
             this.oDialog.dialog('close');
         }).bind(this))
 
+        
+        this.oUndonePanelUnselectButton.click((() => {
+            this._oSelectedRow = null;
+            this.fnComponentUndone('unselectAll');
+        }).bind(this))
         this.oUndonePanelAddButton.click((() => {
             if (!this._oSelectedCategory) {
                 return this.fnShowMessageCategoryNotSelected();
@@ -352,11 +405,17 @@ export class Tasks {
             method: 'get',
             labelPosition: 'top',
             width: '100%',
-            onLoadSuccess: ((node, data) => {
-                if (this._oSelectedCategory) {
-                    this.oCategoryTreeList.combotree('setValue', this._oSelectedCategory.id);
-                }
+
+            onChange: ((newValue,oldValue) => {
+                this.oTasksTreeList.combotree('setValue', null);
+                this.oTasksTreeList.combotree('reload', this.oURLs.list_tree_tasks(newValue));
             }).bind(this),
+
+            // onLoadSuccess: ((node, data) => {
+            //     if (this._oSelectedCategory) {
+            //         this.oCategoryTreeList.combotree('setValue', this._oSelectedCategory.id);
+            //     }
+            // }).bind(this),
         })
     }
 
@@ -369,15 +428,19 @@ export class Tasks {
             method: 'get',
             labelPosition: 'top',
             width: '100%',
-            onLoadSuccess: ((node, data) => {
-                if (this._oSelectedRow) {
-                    this.oTasksTreeList.combotree('setValue', this._oSelectedRow.id);
-                }
-            }).bind(this),
+
+            // onLoadSuccess: ((node, data) => {
+            //     if (this._oSelectedRow) {
+            //         this.oTasksTreeList.combotree('setValue', this._oSelectedRow.id);
+            //     }
+            // }).bind(this),
         })
     }
 
-    
+    static fnInitTaskInputComponent()
+    {
+        this.oTitle.html(`<input id="quick-task-input" type="text" style="position:absolute;width:calc(100% - 200px)"/>`)
+    }
 
     static fnInitComponent()
     {
@@ -415,6 +478,10 @@ export class Tasks {
                     this.fnUncheckTask(row);
                 }
             }).bind(this),
+
+            onSelect: ((iIndex, oNode) => {
+                this._oSelectedRow = this.fnGetSelectedUndone();
+            }),
 
             onContextMenu: ((e, node) => {
                 e.preventDefault();
@@ -512,9 +579,10 @@ export class Tasks {
 
     static fnPrepare()
     {
-        this.fnBindEvents();
+        this.fnInitTaskInputComponent();
         this.fnInitComponentCategoryTreeList();
         this.fnInitComponentTaskTreeList();
         this.fnInitComponent();
+        this.fnBindEvents();
     }
 }

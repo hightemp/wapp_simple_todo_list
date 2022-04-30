@@ -42,6 +42,9 @@ export class Categories {
         return $("#categories-category_id");
     }
 
+    static get oEditDialogCategoryCleanBtn() {
+        return $('#categories-category-clean-btn');
+    }
     static get oEditDialogSaveBtn() {
         return $('#categories-dlg-save-btn');
     }
@@ -172,6 +175,9 @@ export class Categories {
             this.fnReload();
         }).bind(this))
 
+        this.oEditDialogCategoryCleanBtn.click((() => {
+            this.oCategoryTreeList.combotree('clear');
+        }).bind(this))
         this.oEditDialogSaveBtn.click((() => {
             this.fnSave();
         }).bind(this))
