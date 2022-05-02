@@ -125,3 +125,13 @@ function fnBuildRecursiveCategoriesTreeDelete($oCategory)
 
     R::trashBatch(T_CATEGORIES, [$oCategory->id]);
 }
+
+function fnBuildRecursiveTasksParentsUncheck($oTask) 
+{
+    $oParent = R::findOne(T_TASKS, " id = ?", $oTask->ttasks_id);
+
+    $oParent->is_ready = 0;
+    R::store($oParent);
+
+    fnBuildRecursiveTasksParentsUncheck($oParent);
+}

@@ -43,7 +43,14 @@ if ($sMethod == 'update_task') {
     $oTask->name = $aRequest['name'];
     $oTask->description = $aRequest['description'];
     $oTask->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
-    $oTask->ttasks = R::findOne(T_TASKS, "id = ?", [$aRequest['task_id']]);
+    
+    if ($oTask->ttasks_id == $oTask->id) {
+        $oTask->ttasks_id = null;
+    }
+
+    if ($aRequest['task_id'] != $oTask->id) {
+        $oTask->ttasks = R::findOne(T_TASKS, "id = ?", [$aRequest['task_id']]);
+    }
 
     fnBuildRecursiveTasksTreeModifyCategory($oTask, $aRequest['category_id']);
 
@@ -65,10 +72,18 @@ if ($sMethod == 'create_task') {
     $oTask->description = $aRequest['description'];
     $oTask->is_ready = false;
     $oTask->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
-    $oTask->ttasks = R::findOne(T_TASKS, "id = ?", [$aRequest['task_id']]);
 
-    if ($oTask->ttasks) {
-        $oTask->ttasks->is_ready = 0;
+    if ($oTask->ttasks_id == $oTask->id) {
+        $oTask->ttasks_id = null;
+    }
+
+    if ($aRequest['task_id'] != $oTask->id) {
+        $oTask->ttasks = R::findOne(T_TASKS, "id = ?", [$aRequest['task_id']]);
+    }
+
+    if ($oTask->ttasks_id) {
+        // $oTask->ttasks->is_ready = 0;
+        fnBuildRecursiveTasksParentsUncheck($oTask);
     }
 
     R::store($oTask);
@@ -100,7 +115,8 @@ if ($sMethod == 'uncheck_task') {
     $oTask->is_ready = 0;
 
     if ($oTask->ttasks) {
-        $oTask->ttasks->is_ready = 0;
+        // $oTask->ttasks->is_ready = 0;
+        fnBuildRecursiveTasksParentsUncheck($oTask);
     }
 
     fnBuildRecursiveTasksTreeModify($oTask, 0);
