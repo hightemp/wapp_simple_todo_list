@@ -70,6 +70,10 @@
                 <input name="name" class="easyui-textbox" required="true" style="width:100%">
             </div>
             <div style="margin-bottom:10px">
+                <label>Сортировка:</label>
+                <input name="sort" class="easyui-textbox" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
                 <label>Описание:</label>
                 <input name="description" class="easyui-textbox" style="width:100%;height:200px" multiline="true">
             </div>
@@ -100,6 +104,10 @@
             <div style="margin-bottom:10px" id="tasks-name-fieldblock">
                 <label>Заголовок:</label>
                 <input name="name" class="easyui-textbox" style="width:100%;" id="tasks-name">
+            </div>
+            <div style="margin-bottom:10px">
+                <label>Сортировка:</label>
+                <input name="sort" class="easyui-textbox" style="width:100%">
             </div>
             <div style="margin-bottom:10px">
                 <label>Описание:</label>

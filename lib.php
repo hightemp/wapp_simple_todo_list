@@ -2,16 +2,24 @@
 
 function fnUpdateFields()
 {
-    $oTask = R::dispense(T_TASKS);
+    $oItem = R::dispense(T_TASKS);
 
-    $oTask->sort = 0;
-    $oTask->status = 0;
-    $oTask->priority = 0;
-    $oTask->until_date = time();
+    $oItem->sort = 0;
+    $oItem->status = 0;
+    $oItem->priority = 0;
+    $oItem->until_date = time();
 
-    R::store($oTask);
+    R::store($oItem);
 
-    R::trashBatch(T_TASKS, [$oTask->id]);
+    R::trashBatch(T_TASKS, [$oItem->id]);
+
+    $oItem = R::dispense(T_CATEGORIES);
+
+    $oItem->sort = 0;
+
+    R::store($oItem);
+
+    R::trashBatch(T_CATEGORIES, [$oItem->id]);
 }
 
 function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories) 
@@ -28,6 +36,7 @@ function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories)
             'id' => $oCategory->id,
             'text' => $oCategory->name,
             'name' => $oCategory->name,
+            'sort' => $oCategory->sort,
             'description' => $oCategory->description,
             'category_id' => $oCategory->tcategories_id,
             'children' => $aTreeChildren,

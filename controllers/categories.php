@@ -7,11 +7,22 @@ $sCurDay = "strftime('%Y-%m-%d', datetime(until_date, 'unixepoch'))=strftime('%Y
 $sCurWeek = "strftime('%W', datetime(until_date, 'unixepoch'))=strftime('%W')";
 
 if ($sMethod == 'list_tree_categories') {
+    $sOrder = "ORDER BY sort DESC, id DESC";
+
     if (isset($aRequest['category_id'])) {
-        $aCategories = R::findAll(T_CATEGORIES, 'tcategories_id = ?', [$aRequest['category_id']]);
+        $aCategories = R::findAll(T_CATEGORIES, "tcategories_id = ? {$sOrder}", [$aRequest['category_id']]);
+
+        if (count($aCategories) != R::count(T_CATEGORIES, "tcategories_id = ?", [$aRequest['category_id']])) {
+            fnUpdateFields();
+        }
     } else {
-        $aCategories = R::findAll(T_CATEGORIES, 'tcategories_id IS NULL');
+        $aCategories = R::findAll(T_CATEGORIES, "tcategories_id IS NULL {$sOrder}");
+
+        if (count($aCategories) != R::count(T_CATEGORIES, "tcategories_id IS NULL")) {
+            fnUpdateFields();
+        }
     }
+
     $aResult = [];
 
     fnBuildRecursiveCategoriesTree($aResult, $aCategories);
@@ -70,6 +81,8 @@ if ($sMethod == 'update_category') {
     $oCategory->name = $aRequest['name'];
     $oCategory->description = $aRequest['description'];
 
+    $oCategory->sort = $aRequest['sort'];
+
     if (isset($aRequest['category_id']) && !empty($aRequest['category_id'])) {
         $oCategory->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
     }
@@ -87,6 +100,8 @@ if ($sMethod == 'create_category') {
 
     $oCategory->name = $aRequest['name'];
     $oCategory->description = $aRequest['description'];
+
+    $oCategory->sort = $aRequest['sort'];
 
     if (isset($aRequest['category_id']) && !empty($aRequest['category_id'])) {
         $oCategory->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);

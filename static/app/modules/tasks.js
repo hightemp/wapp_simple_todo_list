@@ -569,10 +569,11 @@ export class Tasks {
                             if (iI<aV.length-1) {
                                 var iH = 1;
                                 for (var iC=0; iC<aV[iI].length; iC++) {
-                                    iH *= aV[iI].charCodeAt(iI)*425345345;
+                                    iH *= aV[iI].charCodeAt(iC)*425345345;
                                 }
                                 iH = iH % 360;
-                                var sC = `hsl(${iH}, 90%, 90%);`;
+                                var iS = 85 + (5 - iH % 10);
+                                var sC = `hsl(${iH}, ${iS}%, ${iS}%);`;
                                 aV[iI] = `<span style="background: ${sC}" class="badge-normal">${aV[iI]}</span>`;
                             }
                         }
