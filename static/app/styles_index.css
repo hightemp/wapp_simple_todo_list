@@ -34,6 +34,11 @@ body {
     padding: 2px;
 }
 
+.tree-title {
+    /* white-space: break-spaces !important;
+    word-break: break-all !important; */
+}
+
 .status-0 {
     background: hsl(280, 90%, 90%);
 }

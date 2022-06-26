@@ -56,6 +56,7 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
             'name' => $oTask->name,
             'description' => $oTask->description,
             'category_id' => $oTask->tcategories_id,
+            'category' => $oTask->tcategories->name,
             'task_id' => $oTask->ttasks_id,
             'children' => $aTreeChildren,
             'notes_count' => $iC,

@@ -530,6 +530,10 @@ export class Tasks {
             height: "100%",
             rownumbers: true,
 
+            // striped: true,
+            // nowrap: false,
+            autoRowHeight: true,
+
             idField: 'id',
             treeField: 'text',
 
@@ -554,8 +558,11 @@ export class Tasks {
                 },
                 {
                     field:'text',title:'Описание',
-                    formatter: function(value,row,index){
-                        // var sC = (row.status == '4') ? 'done' : 'undone';
+                    formatter: (function(value,row,index){
+                        if (this._oSelectedCategory && this._oSelectedCategory.id<1 && row.category) {
+                            value = row.category + ' - ' + value;
+                        }
+
                         var aV = value.split(' - ');
 
                         for (var iI in aV) {
@@ -565,13 +572,13 @@ export class Tasks {
                                     iH *= aV[iI].charCodeAt(iI)*425345345;
                                 }
                                 iH = iH % 360;
-                                var sC = `hsl(${iH}, 70%, 70%);`;
+                                var sC = `hsl(${iH}, 90%, 90%);`;
                                 aV[iI] = `<span style="background: ${sC}" class="badge-normal">${aV[iI]}</span>`;
                             }
                         }
 
                         return aV.join(` - `);
-                    },
+                    }).bind(this),
                     width: '63%'
                 },
                 {field:'created_at',title:'Создано',width: '17%'},
