@@ -2,18 +2,21 @@ version: '3'
 
 networks:
   nw_wapp_simple_todo_list:
+  proxy_net:
+    external:
+      name: proxy_net
 
 services:
   nginx:
     restart: always
     container_name: wapp_simple_todo_list_nginx
-    hostname: wapp_simple_todo_list.local
+    # hostname: wapp_simple_todo_list.local
     build:
       context: ./docker/nginx
       dockerfile: Dockerfile
     working_dir: /var/www
-    ports:
-      - "${NGINX_PORT}:80"
+    # ports:
+    #   - "${NGINX_PORT}:80"
     volumes:
       - ${WORK_PATH}:/var/www
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
@@ -21,7 +24,12 @@ services:
     depends_on:
       - php_fpm
     networks:
+      - proxy_net
       - nw_wapp_simple_todo_list
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy_net"
+      - "traefik.http.routers.wapp_simple_todo_list_nginx.rule=Host(`${PREFIX}wapp_simple_todo_list.local`) || Host(`${PREFIX}wapp_simple_todo_list.localhost`)"
 
   php_fpm:
     restart: always

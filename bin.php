@@ -22,6 +22,19 @@ if ($argv[1] == "list_fields") {
     die(json_encode($fields));
 }
 
+if ($argv[1] == "add_fields") {
+    $oTask = R::dispense(T_TASKS);
+
+    $oTask->sort = 0;
+    $oTask->status = 0;
+    $oTask->priority = 0;
+    $oTask->until_date = time();
+
+    R::store($oTask);
+
+    R::trashBatch(T_TASKS, [$oTask->id]);
+}
+
 if ($argv[1] == "create_scheme") {
     R::nuke();
 

@@ -11,6 +11,9 @@ export class Tasks {
 
         move_to_root_task: 'ajax.php?method=move_to_root_task',
 
+        remove_today_task: 'ajax.php?method=remove_today_task',
+        make_today_task: 'ajax.php?method=make_today_task',
+
         list_undone: tpl`ajax.php?method=list_last_undone_tasks&category_id=${0}`,
         list_done: tpl`ajax.php?method=list_last_done_tasks&category_id=${0}`,
 
@@ -19,6 +22,9 @@ export class Tasks {
 
         list_tree_categories: `ajax.php?method=list_tree_categories`,
         list_tree_tasks: tpl`ajax.php?method=list_tree_tasks&category_id=${0}`,
+
+        update_task_priority: 'ajax.php?method=update_task_priority',
+        update_task_status: 'ajax.php?method=update_task_status',
     }
     static oWindowTitles = {
         create: 'Новая задача',
@@ -33,6 +39,9 @@ export class Tasks {
 
     static _oSelectedCategory = null;
     static _oSelectedRow = null;
+
+    static _oProritiesList = {};
+    static _oStatusesList = {};
 
     static get sTodoListToolbar() {
         return `#tasks-list-tb`;
@@ -137,6 +146,7 @@ export class Tasks {
 
     static fnShowCreateWindow() {
         this.sURL = this.oURLs.create;
+        this._oSelectedRow = this.fnGetSelectedUndone();
         var oData = {
             category_id: this._oSelectedCategory ? this._oSelectedCategory.id : '',
             task_id: this._oSelectedRow ? this._oSelectedRow.id : '',
@@ -243,6 +253,108 @@ export class Tasks {
         }
     }
 
+    static fnRemoveTodayTask(oRow) {
+        if (oRow){
+            $.post(
+                this.oURLs.remove_today_task,
+                { id: oRow.id },
+                (function(result) {
+                    this.fnReload();
+                    this.fnReloadLists();
+                }).bind(this),
+                'json'
+            );
+        }
+    }
+
+    static fnMakeTodayTask(oRow) {
+        if (oRow){
+            $.post(
+                this.oURLs.make_today_task,
+                { id: oRow.id },
+                (function(result) {
+                    this.fnReload();
+                    this.fnReloadLists();
+                }).bind(this),
+                'json'
+            );
+        }
+    }
+
+    static fnUpdatePriority(oRow, iValue)
+    {
+        return $.post(
+            this.oURLs.update_task_priority,
+            { 
+                id: oRow.id,
+                priority: iValue
+            },
+            (function(result) {
+                this.fnReload();
+                this.fnReloadLists();
+            }).bind(this),
+            'json'
+        );
+    }
+
+    static fnUpdateStatus(oRow, iValue)
+    {
+        return $.post(
+            this.oURLs.update_task_status,
+            { 
+                id: oRow.id,
+                status: iValue
+            },
+            (function(result) {
+                this.fnReload();
+                this.fnReloadLists();
+            }).bind(this),
+            'json'
+        );
+    }
+
+    static fnReloadStatusesList()
+    {
+        return $.post(
+            'ajax.php?method=list_statuses',
+            { },
+            (function(result) {
+                this._oStatusesList = result;
+
+                for (var iIndex in this._oStatusesList) {
+                    var sValue = this._oStatusesList[iIndex];
+                    this.oContextMenu.menu('appendItem', {
+                        parent: $("#status")[0],
+                        text: sValue,
+                        id: `update_status-${iIndex}`
+                    });
+                }
+            }).bind(this),
+            'json'
+        );
+    }
+
+    static fnReloadPrioritiesList()
+    {
+        return $.post(
+            'ajax.php?method=list_priories',
+            { },
+            (function(result) {
+                this._oProritiesList = result;
+
+                for (var iIndex in this._oProritiesList) {
+                    var sValue = this._oProritiesList[iIndex];
+                    this.oContextMenu.menu('appendItem', {
+                        parent: $("#priority")[0],
+                        text: sValue,
+                        id: `update_priority-${iIndex}`
+                    });
+                }
+            }).bind(this),
+            'json'
+        );
+    }
+
     static fnReloadLists()
     {
         var iCID = this._oSelectedCategory ? this._oSelectedCategory.id : 0;
@@ -262,6 +374,7 @@ export class Tasks {
     static fnBindEvents()
     {
         $(document).on(this.oEvents.categories_select, ((oEvent, oNode) => {
+            this._oSelectedRow = null; 
             this._oSelectedCategory = oNode;
             this.fnReloadLists();
 
@@ -351,43 +464,6 @@ export class Tasks {
 
             this.fnReload();
         }).bind(this))
-
-
-        // this.oDonePanelAddButton.click((() => {
-        //     if (!this._oSelectedCategory) {
-        //         return this.fnShowMessageCategoryNotSelected();
-        //     }
-
-        //     this.fnShowCreateWindow();
-        // }).bind(this))
-        // this.oDonePanelEditButton.click((() => {
-        //     if (!this._oSelectedCategory) {
-        //         return this.fnShowMessageCategoryNotSelected();
-        //     }
-
-        //     var oSelected = this._oSelectedRow = this.fnGetSelectedDone();
-
-        //     if (oSelected) {
-        //         this.fnShowEditWindow(oSelected);
-        //     }
-        // }).bind(this))
-        // this.oDonePanelRemoveButton.click((() => {
-        //     if (!this._oSelectedCategory) {
-        //         return this.fnShowMessageCategoryNotSelected();
-        //     }
-
-        //     var oSelected = this.fnGetSelectedUndone();
-        //     if (oSelected) {
-        //         this.fnDelete(oSelected);
-        //     }
-        // }).bind(this))
-        // this.oDonePanelReloadButton.click((() => {
-        //     if (!this._oSelectedCategory) {
-        //         return this.fnShowMessageCategoryNotSelected();
-        //     }
-
-        //     this.fnReload();
-        // }).bind(this))
     }
 
     static fnFireEvent_Save() {
@@ -457,19 +533,40 @@ export class Tasks {
             idField: 'id',
             treeField: 'text',
 
-            checkbox: true,
+            // checkbox: true,
 
             columns:[[
                 {
+                    field:'status',
+                    title:'Статус',
+                    width: '10%',
+                    formatter: (function(value,row,index) {
+                        return `<div class="badge status-${value}">${this._oStatusesList[value]}</style>`
+                    }).bind(this),
+                },
+                {   
+                    field:'priority',
+                    title:'Приоритет',
+                    width: '10%',
+                    formatter: (function(value,row,index){
+                        return `<div class="badge priority-${value}">${this._oProritiesList[value]}</style>`
+                    }).bind(this),
+                },
+                {
                     field:'text',title:'Описание',
                     formatter: function(value,row,index){
-                        var sC = (row.is_ready == '1') ? 'done' : 'undone';
+                        var sC = (row.status == '4') ? 'done' : 'undone';
                         return `<div class="wrapped-text ${sC}">${value}</style>`
                     },
-                    width:600
+                    width: '63%'
                 },
-                {field:'created_at',title:'Создано',width:200},
+                {field:'created_at',title:'Создано',width: '17%'},
             ]],
+
+            rowStyler: function(row) {
+                var sC = (row.status == '4') ? '0.5' : '1.0';
+                return `opacity: ${sC};`
+            },
 
             onCheckNode: ((row,checked) => {
                 if (checked) {
@@ -481,7 +578,11 @@ export class Tasks {
 
             onSelect: ((iIndex, oNode) => {
                 this._oSelectedRow = this.fnGetSelectedUndone();
-            }),
+            }).bind(this),
+
+            onUnselect: (() => {
+                this._oSelectedRow = null;
+            }).bind(this),
 
             onContextMenu: ((e, node) => {
                 e.preventDefault();
@@ -512,77 +613,39 @@ export class Tasks {
                         if (item.id == 'move_to_root_task') {
                             this.fnMoveToRoot(node);
                         }
+
+                        if (item.id == 'remove_today_task') {
+                            this.fnRemoveTodayTask(node);
+                        }
+                        if (item.id == 'make_today_task') {
+                            this.fnMakeTodayTask(node);
+                        }
+
+                        if (item.id.startsWith('update_priority')) {
+                            console.log([node, item]);
+                            this.fnUpdatePriority(node, item.id.replace(/\D+/, ''));
+                        }
+                        if (item.id.startsWith('update_status')) {
+                            this.fnUpdateStatus(node, item.id.replace(/\D+/, ''));
+                        }
                     }
                 });
             }).bind(this),
         });
-
-        // this.fnComponentDone({
-        //     singleSelect: true,
-
-        //     url: this.oURLs.list_done(iCID),
-        //     method: 'get',
-        //     height: "100%",
-        //     rownumbers: true,
-
-        //     idField:'id',
-        //     treeField:'text',
-
-        //     checkbox: true,
-
-        //     columns:[[
-        //         {
-        //             field:'text',title:'Описание',
-        //             formatter: function(value,row,index){
-        //                 return `<div class="wrapped-text">${value}</style>`
-        //             },
-        //             width:600
-        //         },
-        //         {field:'created_at',title:'Создано',width:200},
-        //     ]],
-
-        //     onCheckNode: ((row,checked) => {
-        //         console.log([row,checked]);
-        //         if (checked) {
-        //             this.fnCheckTask(row);
-        //         } else {
-        //             this.fnUncheckTask(row);
-        //         }
-        //     }).bind(this),
-
-        //     onContextMenu: ((e, node) => {
-        //         e.preventDefault();
-        //         this.oContextMenu.menu('show', {
-        //             left: e.pageX,
-        //             top: e.pageY,
-        //             onClick: (item) => {
-        //                 if (item.id == 'check') {
-        //                     this.fnCheckTask(node);
-        //                 }
-        //                 if (item.id == 'uncheck') {
-        //                     this.fnUncheckTask(node);
-        //                 }
-        //                 if (item.id == 'edit') {
-        //                     this.fnShowEditWindow(node);
-        //                 }
-        //                 if (item.id == 'delete') {
-        //                     this.fnDelete(node);
-        //                 }
-        //                 if (item.id == 'move_to_root_task') {
-        //                     this.fnMoveToRoot(node);
-        //                 }
-        //             }
-        //         });
-        //     }).bind(this),
-        // });
     }
 
     static fnPrepare()
     {
-        this.fnInitTaskInputComponent();
-        this.fnInitComponentCategoryTreeList();
-        this.fnInitComponentTaskTreeList();
-        this.fnInitComponent();
-        this.fnBindEvents();
+        this.fnReloadStatusesList()
+            .done((() => {
+                this.fnReloadPrioritiesList()
+                    .done((() => {
+                        this.fnInitTaskInputComponent();
+                        this.fnInitComponentCategoryTreeList();
+                        this.fnInitComponentTaskTreeList();
+                        this.fnInitComponent();
+                        this.fnBindEvents();                
+                    }).bind(this))
+            }).bind(this))
     }
 }

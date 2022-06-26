@@ -1,5 +1,19 @@
 <?php
 
+function fnUpdateFields()
+{
+    $oTask = R::dispense(T_TASKS);
+
+    $oTask->sort = 0;
+    $oTask->status = 0;
+    $oTask->priority = 0;
+    $oTask->until_date = time();
+
+    R::store($oTask);
+
+    R::trashBatch(T_TASKS, [$oTask->id]);
+}
+
 function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories) 
 {
     $aResult = [];
@@ -36,6 +50,7 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
         $aResult[] = [
             'id' => $oTask->id,
             'text' => $oTask->name,
+            'sort' => $oTask->sort,
             'created_at' => $oTask->created_at,
             'is_ready' => $oTask->is_ready,
             'name' => $oTask->name,
@@ -45,6 +60,8 @@ function fnBuildRecursiveTasksTree(&$aResult, $aTasks, $sSQL = "", $aBindings=[]
             'children' => $aTreeChildren,
             'notes_count' => $iC,
             'checked' => $oTask->is_ready == '1',
+            'status' => $oTask->status ?: 0,
+            'priority' => $oTask->priority ?: 0,
             // 'state' => $iC > 0 ? "closed" : "",
         ];
     }

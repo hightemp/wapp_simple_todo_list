@@ -12,9 +12,26 @@ if ($sMethod == 'list_tree_categories') {
 
     fnBuildRecursiveCategoriesTree($aResult, $aCategories);
 
-    $aResult = array_merge([
-        ["id" => "0", "text" => "Все", "name" => "Все"]
-    ], $aResult);
+    $sCurDay = "date(until_date, 'unixepoch')=date('now')";
+
+    $aResult = [
+        [
+            "id" => "-1", 
+            "text" => "На сегодня", 
+            "name" => "На сегодня",
+            "notes_count" => R::count(T_TASKS, "{$sCurDay}"),
+            "children" => [],
+            "iconCls" => "icon-clock"
+        ],
+        [
+            "id" => "0", 
+            "text" => "Все", 
+            "name" => "Все",
+            "iconCls" => "icon-sitemap",
+            "notes_count" => R::count(T_TASKS),
+            "children" => $aResult
+        ]
+    ];
 
     die(json_encode(array_values($aResult)));
 }

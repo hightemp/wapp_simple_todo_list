@@ -120,9 +120,25 @@
     <div id="tasks-mm" class="easyui-menu" style="width:auto;">
         <!-- <div data-options="id:'check'">Выполнено</div>
         <div data-options="id:'uncheck'">Не выполнено</div> -->
-        <div data-options="id:'add'">Добавить задачу</div>
-        <div data-options="id:'move_to_root_task'">Переместить в корень</div>
-        <div data-options="id:'edit'">Радактировать</div>
-        <div data-options="id:'delete'">Удалить</div>
+        <div data-options="id:'status',iconCls:'icon-tag_blue'">
+            <span>Статус</span>
+            <div style="width:200px;" id="status-submenu">
+                <!-- <div></div> -->
+            </div>
+        </div>
+        <div data-options="id:'priority',iconCls:'icon-medal_bronze_1'">
+            <span>Проиритет</span>
+            <div style="width:200px;" id="priority-submenu">
+                <!-- <div></div> -->
+            </div>
+        </div>
+
+        <div data-options="id:'remove_today_task',iconCls:'icon-clock_delete'">Удаить из задач тек. дня</div>
+        <div data-options="id:'make_today_task',iconCls:'icon-clock_add'">Добавить в задачи тек. дня</div>
+
+        <div data-options="id:'add',iconCls:'icon-add'">Добавить задачу</div>
+        <div data-options="id:'move_to_root_task',iconCls:'icon-bricks'">Переместить в корень</div>
+        <div data-options="id:'edit',iconCls:'icon-edit'">Радактировать</div>
+        <div data-options="id:'delete',iconCls:'icon-bin'">Удалить</div>
     </div>
 </div>
