@@ -29,6 +29,11 @@ body {
     padding: 2px;
 }
 
+.badge-normal {
+    border-radius: 2px;
+    padding: 2px;
+}
+
 .status-0 {
     background: hsl(280, 90%, 90%);
 }

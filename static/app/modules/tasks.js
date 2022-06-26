@@ -555,8 +555,22 @@ export class Tasks {
                 {
                     field:'text',title:'Описание',
                     formatter: function(value,row,index){
-                        var sC = (row.status == '4') ? 'done' : 'undone';
-                        return `<div class="wrapped-text ${sC}">${value}</style>`
+                        // var sC = (row.status == '4') ? 'done' : 'undone';
+                        var aV = value.split(' - ');
+
+                        for (var iI in aV) {
+                            if (iI<aV.length-1) {
+                                var iH = 1;
+                                for (var iC=0; iC<aV[iI].length; iC++) {
+                                    iH *= aV[iI].charCodeAt(iI)*425345345;
+                                }
+                                iH = iH % 360;
+                                var sC = `hsl(${iH}, 70%, 70%);`;
+                                aV[iI] = `<span style="background: ${sC}" class="badge-normal">${aV[iI]}</span>`;
+                            }
+                        }
+
+                        return aV.join(` - `);
                     },
                     width: '63%'
                 },
