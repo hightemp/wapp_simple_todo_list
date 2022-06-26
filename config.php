@@ -30,3 +30,5 @@ $sFTP = __DIR__."/data/tables";
 $sFFP = __DIR__."/data/resources/files";
 $sIP = "/data/resources/images";
 $sFIP = __DIR__."/data/resources/images";
+
+define('STATUS_DONE', 4);

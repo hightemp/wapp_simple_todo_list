@@ -104,6 +104,10 @@ if ($sMethod == 'update_task_status') {
 
     $oTask->status = $aRequest['status'];
 
+    if ($oTask->status == STATUS_DONE) {
+        $oTask->until_date = null;
+    }
+
     R::store($oTask);
 
     die(json_encode([
@@ -121,9 +125,9 @@ if ($sMethod == 'update_task') {
     $oTask->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
 
     $oTask->sort = $aRequest['sort'];
-    $oTask->status = $aRequest['status'];
-    $oTask->priority = $aRequest['priority'];
-    $oTask->until_date = $aRequest['until_date'];
+    // $oTask->status = $aRequest['status'];
+    // $oTask->priority = $aRequest['priority'];
+    // $oTask->until_date = $aRequest['until_date'];
     
     if ($oTask->ttasks_id == $oTask->id) {
         $oTask->ttasks_id = null;
@@ -156,9 +160,9 @@ if ($sMethod == 'create_task') {
     $oTask->tcategories = R::findOne(T_CATEGORIES, "id = ?", [$aRequest['category_id']]);
 
     $oTask->sort = $aRequest['sort'];
-    $oTask->status = $aRequest['status'];
-    $oTask->priority = $aRequest['priority'];
-    $oTask->until_date = $aRequest['until_date'];
+    // $oTask->status = $aRequest['status'];
+    // $oTask->priority = $aRequest['priority'];
+    // $oTask->until_date = $aRequest['until_date'];
 
     if ($oTask->ttasks_id == $oTask->id) {
         $oTask->ttasks_id = null;
