@@ -22,15 +22,15 @@ function fnUpdateFields()
     R::trashBatch(T_CATEGORIES, [$oItem->id]);
 }
 
-function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories) 
+function fnBuildRecursiveCategoriesTree(&$aResult, $aCategories, $sSQL="") 
 {
     $aResult = [];
 
     foreach ($aCategories as $oCategory) {
         $aTreeChildren = [];
 
-        $aChildren = R::findAll(T_CATEGORIES, " tcategories_id = {$oCategory->id}");
-        fnBuildRecursiveCategoriesTree($aTreeChildren, $aChildren);
+        $aChildren = R::findAll(T_CATEGORIES, " tcategories_id = {$oCategory->id} {$sSQL}");
+        fnBuildRecursiveCategoriesTree($aTreeChildren, $aChildren, $sSQL);
 
         $aResult[] = [
             'id' => $oCategory->id,

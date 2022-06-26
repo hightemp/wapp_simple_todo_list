@@ -26,7 +26,7 @@ if ($sMethod == 'list_tree_categories') {
 
     $aResult = [];
 
-    fnBuildRecursiveCategoriesTree($aResult, $aCategories);
+    fnBuildRecursiveCategoriesTree($aResult, $aCategories, $sOrder);
 
     $aResult = [
         [
