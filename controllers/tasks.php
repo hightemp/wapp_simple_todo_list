@@ -27,6 +27,7 @@ if ($sMethod == 'list_statuses') {
 $sIsRoot = "ttasks_id IS NULL";
 $sCurDay = "strftime('%Y-%m-%d', datetime(until_date, 'unixepoch'))=strftime('%Y-%m-%d')";
 $sCurWeek = "strftime('%W', datetime(until_date, 'unixepoch'))=strftime('%W')";
+$sCurMonth = "strftime('%m', datetime(until_date, 'unixepoch'))=strftime('%m')";
 
 if ($sMethod == 'list_tree_tasks') {
     $aResult = [];
@@ -48,6 +49,9 @@ if ($sMethod == 'list_tree_tasks') {
             fnBuildRecursiveTasksTree($aResult, $aTasks);
         } else if ($aRequest['category_id']==-2) {
             $aTasks = R::findAll(T_TASKS, "{$sCurWeek} {$sOrder}", []);
+            fnBuildRecursiveTasksTree($aResult, $aTasks);
+        } else if ($aRequest['category_id']==-3) {
+            $aTasks = R::findAll(T_TASKS, "{$sCurMonth} {$sOrder}", []);
             fnBuildRecursiveTasksTree($aResult, $aTasks);
         }
     }

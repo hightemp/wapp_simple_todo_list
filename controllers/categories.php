@@ -5,6 +5,7 @@
 $sIsRoot = "ttasks_id IS NULL";
 $sCurDay = "strftime('%Y-%m-%d', datetime(until_date, 'unixepoch'))=strftime('%Y-%m-%d')";
 $sCurWeek = "strftime('%W', datetime(until_date, 'unixepoch'))=strftime('%W')";
+$sCurMonth = "strftime('%m', datetime(until_date, 'unixepoch'))=strftime('%m')";
 
 if ($sMethod == 'list_tree_categories') {
     $sOrder = "ORDER BY sort DESC, id DESC";
@@ -28,6 +29,14 @@ if ($sMethod == 'list_tree_categories') {
     fnBuildRecursiveCategoriesTree($aResult, $aCategories);
 
     $aResult = [
+        [
+            "id" => "-3", 
+            "text" => "На месяц", 
+            "name" => "На месяц",
+            "notes_count" => R::count(T_TASKS, "{$sCurMonth}"),
+            "children" => [],
+            "iconCls" => "icon-clock_red"
+        ],
         [
             "id" => "-2", 
             "text" => "На этой неделе", 

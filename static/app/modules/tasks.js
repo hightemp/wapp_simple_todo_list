@@ -32,6 +32,7 @@ export class Tasks {
     }
     static oEvents = {
         tasks_save: "tasks:save",
+        tasks_make_today_task: "tasks:make_today_task",
         tasks_item_click: "tasks:item_click",
         categories_save: "categories:save",
         categories_select: "categories:select",
@@ -259,6 +260,7 @@ export class Tasks {
                 this.oURLs.remove_today_task,
                 { id: oRow.id },
                 (function(result) {
+                    this.fnFireEvent_MakeTodayTask();
                     this.fnReload();
                     this.fnReloadLists();
                 }).bind(this),
@@ -273,6 +275,7 @@ export class Tasks {
                 this.oURLs.make_today_task,
                 { id: oRow.id },
                 (function(result) {
+                    this.fnFireEvent_MakeTodayTask();
                     this.fnReload();
                     this.fnReloadLists();
                 }).bind(this),
@@ -353,6 +356,10 @@ export class Tasks {
             }).bind(this),
             'json'
         );
+    }
+
+    static fnFireEvent_MakeTodayTask() {
+        $(document).trigger(this.oEvents.tasks_make_today_task);
     }
 
     static fnReloadLists()

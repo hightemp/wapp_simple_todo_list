@@ -21,6 +21,7 @@ export class Categories {
     }
     static oEvents = {
         tasks_save: "tasks:save",
+        tasks_make_today_task: "tasks:make_today_task",
         categories_save: "categories:save",
         categories_select: "categories:select",
     }
@@ -178,6 +179,10 @@ export class Categories {
             this.fnReload();
         }).bind(this))
 
+        $(document).on(this.oEvents.tasks_make_today_task, ((oEvent, oNode) => {
+            this.fnReload();
+        }).bind(this))
+
         this.oEditDialogCategoryCleanBtn.click((() => {
             this.oCategoryTreeList.combotree('clear');
         }).bind(this))
@@ -272,6 +277,9 @@ export class Categories {
 
             formatter: function(node) {
                 var s = node.text;
+                if (node.id == -3) {
+                    s = `<b>${s}</b>`;
+                }
                 if (node.id == -2) {
                     s = `<b>${s}</b>`;
                 }
