@@ -408,6 +408,7 @@ export class Tasks {
                     (function(result) {
                         this.fnReload();
                         this.fnReloadLists();
+                        this.fnFireEvent_Save();
                     }).bind(this),
                     'json'
                 );
