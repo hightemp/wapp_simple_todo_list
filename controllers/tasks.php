@@ -35,24 +35,24 @@ if ($sMethod == 'list_tree_tasks') {
 
     if (isset($aRequest['category_id']) && $aRequest['category_id']>0) {
         $aTasks = R::findAll(T_TASKS, "{$sIsRoot} AND tcategories_id = ? {$sOrder}", [$aRequest['category_id']]);
-        fnBuildRecursiveTasksTree($aResult, $aTasks);
+        fnBuildRecursiveTasksTree($aResult, $aTasks, $sOrder);
     } else {
         if ($aRequest['category_id']==0) {
             $aTasks = R::findAll(T_TASKS, "{$sIsRoot} {$sOrder}", []);
-            fnBuildRecursiveTasksTree($aResult, $aTasks);
+            fnBuildRecursiveTasksTree($aResult, $aTasks, $sOrder);
 
             if (count($aTasks) != R::count(T_TASKS, "{$sIsRoot}")) {
                 fnUpdateFields();
             }
         } else if ($aRequest['category_id']==-1) {
             $aTasks = R::findAll(T_TASKS, "{$sCurDay} {$sOrder}", []);
-            fnBuildRecursiveTasksTree($aResult, $aTasks);
+            fnBuildRecursiveTasksTree($aResult, $aTasks, $sOrder);
         } else if ($aRequest['category_id']==-2) {
             $aTasks = R::findAll(T_TASKS, "{$sCurWeek} {$sOrder}", []);
-            fnBuildRecursiveTasksTree($aResult, $aTasks);
+            fnBuildRecursiveTasksTree($aResult, $aTasks, $sOrder);
         } else if ($aRequest['category_id']==-3) {
             $aTasks = R::findAll(T_TASKS, "{$sCurMonth} {$sOrder}", []);
-            fnBuildRecursiveTasksTree($aResult, $aTasks);
+            fnBuildRecursiveTasksTree($aResult, $aTasks, $sOrder);
         }
     }
 
