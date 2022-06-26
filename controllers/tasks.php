@@ -24,24 +24,30 @@ if ($sMethod == 'list_statuses') {
     die(json_encode(array_values($aResult)));
 }
 
+$sIsRoot = "ttasks_id IS NULL";
+$sCurDay = "strftime('%Y-%m-%d', datetime(until_date, 'unixepoch'))=strftime('%Y-%m-%d')";
+$sCurWeek = "strftime('%W', datetime(until_date, 'unixepoch'))=strftime('%W')";
+
 if ($sMethod == 'list_tree_tasks') {
     $aResult = [];
-    $sCurDay = "date(until_date, 'unixepoch')=date('now')";
     $sOrder = "ORDER BY priority ASC, sort DESC, id DESC";
 
     if (isset($aRequest['category_id']) && $aRequest['category_id']>0) {
-        $aTasks = R::findAll(T_TASKS, "ttasks_id IS NULL AND tcategories_id = ? {$sOrder}", [$aRequest['category_id']]);
+        $aTasks = R::findAll(T_TASKS, "{$sIsRoot} AND tcategories_id = ? {$sOrder}", [$aRequest['category_id']]);
         fnBuildRecursiveTasksTree($aResult, $aTasks);
     } else {
         if ($aRequest['category_id']==0) {
-            $aTasks = R::findAll(T_TASKS, "ttasks_id IS NULL {$sOrder}", []);
+            $aTasks = R::findAll(T_TASKS, "{$sIsRoot} {$sOrder}", []);
             fnBuildRecursiveTasksTree($aResult, $aTasks);
 
-            if (count($aTasks) != R::count(T_TASKS, "ttasks_id IS NULL")) {
+            if (count($aTasks) != R::count(T_TASKS, "{$sIsRoot}")) {
                 fnUpdateFields();
             }
         } else if ($aRequest['category_id']==-1) {
             $aTasks = R::findAll(T_TASKS, "{$sCurDay} {$sOrder}", []);
+            fnBuildRecursiveTasksTree($aResult, $aTasks);
+        } else if ($aRequest['category_id']==-2) {
+            $aTasks = R::findAll(T_TASKS, "{$sCurWeek} {$sOrder}", []);
             fnBuildRecursiveTasksTree($aResult, $aTasks);
         }
     }
@@ -50,14 +56,14 @@ if ($sMethod == 'list_tree_tasks') {
 }
 
 if ($sMethod == 'list_last_undone_tasks') {
-    $aTasks = R::findAll(T_TASKS, "ttasks_id IS NULL AND tcategories_id = ? AND is_ready = ? ORDER BY id DESC", [$aRequest['category_id'], 0]);
+    $aTasks = R::findAll(T_TASKS, "{$sIsRoot} AND tcategories_id = ? AND is_ready = ? ORDER BY id DESC", [$aRequest['category_id'], 0]);
     fnBuildRecursiveTasksTree($aResult, $aTasks);
 
     die(json_encode(array_values($aResult)));
 }
 
 if ($sMethod == 'list_last_done_tasks') {
-    $aTasks = R::findAll(T_TASKS, "ttasks_id IS NULL AND tcategories_id = ? AND is_ready = ? ORDER BY id DESC", [$aRequest['category_id'], 1]);
+    $aTasks = R::findAll(T_TASKS, "{$sIsRoot} AND tcategories_id = ? AND is_ready = ? ORDER BY id DESC", [$aRequest['category_id'], 1]);
     fnBuildRecursiveTasksTree($aResult, $aTasks);
 
     die(json_encode(array_values($aResult)));

@@ -270,6 +270,9 @@ export class Categories {
 
             formatter: function(node) {
                 var s = node.text;
+                if (node.id == -2) {
+                    s = `<b>${s}</b>`;
+                }
                 if (node.id == -1) {
                     s = `<b>${s}</b>`;
                 }

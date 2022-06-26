@@ -2,6 +2,10 @@
 
 // Таблицы
 
+$sIsRoot = "ttasks_id IS NULL";
+$sCurDay = "strftime('%Y-%m-%d', datetime(until_date, 'unixepoch'))=strftime('%Y-%m-%d')";
+$sCurWeek = "strftime('%W', datetime(until_date, 'unixepoch'))=strftime('%W')";
+
 if ($sMethod == 'list_tree_categories') {
     if (isset($aRequest['category_id'])) {
         $aCategories = R::findAll(T_CATEGORIES, 'tcategories_id = ?', [$aRequest['category_id']]);
@@ -12,9 +16,15 @@ if ($sMethod == 'list_tree_categories') {
 
     fnBuildRecursiveCategoriesTree($aResult, $aCategories);
 
-    $sCurDay = "date(until_date, 'unixepoch')=date('now')";
-
     $aResult = [
+        [
+            "id" => "-2", 
+            "text" => "На этой неделе", 
+            "name" => "На этой неделе",
+            "notes_count" => R::count(T_TASKS, "{$sCurWeek}"),
+            "children" => [],
+            "iconCls" => "icon-clock_red"
+        ],
         [
             "id" => "-1", 
             "text" => "На сегодня", 
@@ -28,7 +38,7 @@ if ($sMethod == 'list_tree_categories') {
             "text" => "Все", 
             "name" => "Все",
             "iconCls" => "icon-sitemap",
-            "notes_count" => R::count(T_TASKS),
+            "notes_count" => R::count(T_TASKS, "{$sIsRoot}"),
             "children" => $aResult
         ]
     ];
