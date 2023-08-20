@@ -1,5 +1,7 @@
 # wapp_simple_todo_list
 
+[![](https://asdertasd.site/counter/wapp_simple_todo_list?a=1)](https://asdertasd.site/counter/wapp_simple_todo_list)
+
 Простой задачник с категориями
 
 ## Использовано
